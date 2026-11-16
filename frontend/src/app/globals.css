@@ -1,0 +1,85 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --background: 255 255 255;
+  --foreground: 48 27 34;
+  --card: 255 255 255;
+  --muted: 248 243 244;
+  --border: 232 218 222;
+  --primary: 100 28 50;
+  --muted-foreground: 125 101 109;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: 30 17 23;
+  --foreground: 250 244 246;
+  --card: 43 26 33;
+  --muted: 57 36 44;
+  --border: 83 54 65;
+  --primary: 190 119 143;
+  --muted-foreground: 190 166 175;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: rgb(var(--background));
+  color: rgb(var(--foreground));
+}
+
+button,
+a {
+  transition: background-color 180ms ease, color 180ms ease,
+    border-color 180ms ease;
+}
+
+@layer utilities {
+  .bg-background {
+    background-color: rgb(var(--background));
+  }
+
+  .text-foreground {
+    color: rgb(var(--foreground));
+  }
+
+  .bg-card {
+    background-color: rgb(var(--card));
+  }
+
+  .bg-muted {
+    background-color: rgb(var(--muted));
+  }
+
+  .border-border {
+    border-color: rgb(var(--border));
+  }
+
+  .text-muted-foreground {
+    color: rgb(var(--muted-foreground));
+  }
+
+  .text-primary {
+    color: rgb(var(--primary));
+  }
+
+  .bg-primary {
+    background-color: rgb(var(--primary));
+  }
+
+  .border-primary {
+    border-color: rgb(var(--primary));
+  }
+}
