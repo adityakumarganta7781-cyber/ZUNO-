@@ -121,6 +121,9 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Shared sidebar state
+  const [menuOpen, setMenuOpen] = useState(false);
+
   const fetchDashboard = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -227,18 +230,38 @@ export default function Dashboard() {
     );
   }
 
+  const sidebarWidth = menuOpen ? "256px" : "76px";
+
   return (
-    <div className="min-h-screen w-full bg-background text-foreground">
-      <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 md:block">
-        <Sidebar />
+    <div className="min-h-screen w-full bg-[#FFF8FC] text-[#30101F]">
+
+      {/* Sidebar: width is controlled by the same state as main content */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 hidden md:block transition-[width] duration-300 ease-in-out ${
+          menuOpen ? "w-64" : "w-[76px]"
+        }`}
+      >
+        <Sidebar
+          menuOpen={menuOpen}
+          onMenuToggle={() => setMenuOpen((previous) => !previous)}
+        />
       </aside>
 
-      <div className="min-h-screen w-full md:ml-64 md:w-[calc(100%-16rem)]">
+      {/* Main content moves with the sidebar */}
+      <div
+        className="min-h-screen w-full transition-[margin-left,width] duration-300 ease-in-out"
+        style={{
+          marginLeft: `var(--zuno-sidebar-width)`,
+          width: `calc(100% - var(--zuno-sidebar-width))`,
+          "--zuno-sidebar-width": sidebarWidth,
+        } as React.CSSProperties}
+      >
         <div className="sticky top-0 z-40 w-full">
           <Topbar />
         </div>
 
-        <main className="mx-auto w-full max-w-7xl space-y-9 px-5 py-8 md:px-9">
+        <main className="mx-auto w-full max-w-[1600px] space-y-8 px-5 py-7 md:px-8 xl:px-10">
+
           {error && (
             <div className="flex flex-col gap-4 rounded-2xl border border-red-500/30 bg-red-500/5 p-5 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -259,24 +282,36 @@ export default function Dashboard() {
           )}
 
           {/* Burgundy Hero Banner */}
-          <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#641C32] via-[#762B45] to-[#8F5368] p-7 text-white md:p-10">
+          <section className="relative isolate min-h-[390px] overflow-hidden rounded-[30px] bg-gradient-to-br from-[#3D0B25] via-[#641C32] to-[#A83E70] p-7 text-white shadow-[0_22px_60px_rgba(100,28,50,0.20)] md:min-h-[420px] md:p-10 xl:p-12">
+            <div
+              aria-hidden="true"
+              className="absolute inset-y-0 right-0 z-0 w-full opacity-35 md:w-[58%] md:opacity-100"
+              style={{
+                backgroundImage:
+                  "linear-gradient(90deg, #641C32 0%, rgba(100,28,50,0.72) 24%, rgba(61,11,37,0.05) 100%), url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1400&q=85')",
+                backgroundPosition: "center",
+                backgroundSize: "cover",
+              }}
+            />
+            <div className="pointer-events-none absolute -right-20 top-[-110px] h-80 w-80 rounded-full border border-white/15" />
+            <div className="pointer-events-none absolute right-[28%] top-10 h-48 w-48 rounded-full bg-[#F2A6C5]/20 blur-3xl" />
             <div className="relative z-10 max-w-2xl">
               <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs">
                 <Sparkles size={14} />
-                YOUR GLOBAL ECOSYSTEM
+                YOUR GLOBAL CAMPUS ECOSYSTEM
               </div>
 
-              <h1 className="text-3xl font-bold leading-tight md:text-5xl">
-                Welcome{profile?.name ? `, ${profile.name.split(" ")[0]}` : ""}.
+              <h1 className="max-w-[680px] text-3xl font-extrabold leading-[1.08] tracking-tight md:text-5xl xl:text-[58px]">
+                Discover ideas.
                 <br />
-                Discover more.
+                Connect people.
                 <br />
-                Build something meaningful.
+                <span className="text-[#F6A9CB] italic">Build impact. ✨</span>
               </h1>
 
-              <p className="mt-5 max-w-lg text-sm leading-7 text-white/80 md:text-base">
-                Connect with talented people, discover opportunities,
-                collaborate on projects and turn your ideas into impact.
+              <p className="mt-5 max-w-lg text-sm leading-7 text-white/85 md:text-base">
+                A student-first platform to explore opportunities, collaborate
+                on projects, grow your network and turn ideas into reality.
               </p>
 
               {profile?.university && (
@@ -294,18 +329,30 @@ export default function Dashboard() {
                 Explore ZUNO
                 <ArrowUpRight size={17} />
               </Link>
+              <Link
+                href="/projects"
+                className="mt-7 ml-3 inline-flex items-center gap-2 rounded-xl border border-white/60 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
+              >
+                Create Project
+                <Plus size={17} />
+              </Link>
             </div>
 
-            <div className="pointer-events-none absolute -right-16 -top-24 h-80 w-80 rounded-full border border-white/10" />
-            <div className="pointer-events-none absolute -bottom-48 right-20 h-96 w-96 rounded-full border border-white/10" />
+            <div className="pointer-events-none absolute -bottom-48 right-20 h-96 w-96 rounded-full border border-white/15" />
+            <div className="pointer-events-none absolute bottom-5 right-8 hidden rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-xs font-semibold leading-6 text-white/90 backdrop-blur-md md:block">
+              STUDENTS ✦ PROJECTS ✦ STARTUPS
+              <br />
+              OPPORTUNITIES ✦ COMMUNITY
+            </div>
           </section>
 
+          {/* Overview */}
           <section>
             <div className="mb-5 flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold">Your overview</h2>
+                <h2 className="text-2xl font-extrabold tracking-tight text-[#30101F]">Your Overview ✨</h2>
                 <p className="mt-1 text-sm text-gray-500">
-                  Your ZUNO journey begins here.
+                  Track, connect and grow on ZUNO.
                 </p>
               </div>
 
@@ -313,7 +360,7 @@ export default function Dashboard() {
                 onClick={fetchDashboard}
                 disabled={loading}
                 title="Refresh dashboard"
-                className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-xs font-medium transition hover:bg-muted disabled:opacity-50"
+                className="flex items-center gap-2 rounded-xl border border-[#F1C9D9] bg-white px-4 py-2.5 text-xs font-semibold text-[#641C32] shadow-sm transition hover:-translate-y-0.5 hover:shadow-md disabled:opacity-50"
               >
                 <RefreshCw
                   size={14}
@@ -323,21 +370,29 @@ export default function Dashboard() {
               </button>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {stats.map((stat) => {
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
+              {stats.map((stat, index) => {
                 const Icon = stat.icon;
+                const cardStyles = [
+                  "from-[#FFF0F6] to-[#FCE1EE]",
+                  "from-[#F5ECFF] to-[#EBDDFF]",
+                  "from-[#FFF3E8] to-[#FFE5D2]",
+                  "from-[#FFEAF3] to-[#FAD8E8]",
+                  "from-[#F1EAFF] to-[#E6D9FF]",
+                  "from-[#FFF0E5] to-[#FFE1CA]",
+                ];
 
                 return (
                   <Link
                     key={stat.title}
                     href={stat.href}
-                    className="block rounded-2xl border border-border bg-card p-6 transition hover:-translate-y-1 hover:border-primary/50"
+                    className={`group block rounded-[24px] border border-white/90 bg-gradient-to-br ${cardStyles[index]} p-5 shadow-[0_8px_24px_rgba(75,20,48,0.07)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_32px_rgba(75,20,48,0.13)]`}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-primary">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/75 text-[#641C32] shadow-sm">
                         <Icon size={21} />
                       </div>
-                      <ArrowUpRight size={18} className="text-gray-400" />
+                      <ArrowUpRight size={19} className="text-[#641C32]/65 transition group-hover:-translate-y-1 group-hover:translate-x-1" />
                     </div>
 
                     <p className="mt-6 text-3xl font-bold">{stat.value}</p>
@@ -351,8 +406,11 @@ export default function Dashboard() {
             </div>
           </section>
 
+          {/* Notifications and Messages */}
           <section className="grid gap-6 lg:grid-cols-2">
-            <div className="rounded-2xl border border-border bg-card p-6">
+
+            {/* Recent Notifications */}
+            <div className="rounded-[24px] border border-[#F3D8E4] bg-white/90 p-6 shadow-[0_8px_28px_rgba(75,20,48,0.05)]">
               <div className="mb-5 flex items-center justify-between">
                 <div>
                   <h2 className="text-lg font-bold">Recent Notifications</h2>
@@ -361,7 +419,7 @@ export default function Dashboard() {
                   </p>
                 </div>
 
-                <div className="relative rounded-xl bg-muted p-3 text-primary">
+                <div className="relative rounded-2xl bg-[#FCE8F1] p-3 text-[#641C32]">
                   <Bell size={20} />
                   {(statistics?.unreadNotifications ?? 0) > 0 && (
                     <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] text-white">
@@ -417,7 +475,8 @@ export default function Dashboard() {
               )}
             </div>
 
-            <div className="rounded-2xl border border-border bg-card p-6">
+            {/* Recent Messages */}
+            <div className="rounded-[24px] border border-[#F3D8E4] bg-white/90 p-6 shadow-[0_8px_28px_rgba(75,20,48,0.05)]">
               <div className="mb-5 flex items-center justify-between">
                 <div>
                   <h2 className="text-lg font-bold">Recent Messages</h2>
@@ -426,7 +485,7 @@ export default function Dashboard() {
                   </p>
                 </div>
 
-                <div className="rounded-xl bg-muted p-3 text-primary">
+                <div className="rounded-2xl bg-[#F1E8FF] p-3 text-[#641C32]">
                   <MessageCircle size={20} />
                 </div>
               </div>
@@ -483,6 +542,7 @@ export default function Dashboard() {
             </div>
           </section>
 
+          {/* Explore the Ecosystem */}
           <section>
             <div className="mb-5">
               <h2 className="text-xl font-bold">Explore the ecosystem</h2>
@@ -499,9 +559,9 @@ export default function Dashboard() {
                   <Link
                     key={item.title}
                     href={item.href}
-                    className="block rounded-2xl border border-border bg-card p-6 transition hover:-translate-y-1 hover:border-primary/50"
+                    className="block rounded-[24px] border border-[#F3D8E4] bg-white p-6 shadow-[0_8px_24px_rgba(75,20,48,0.05)] transition duration-300 hover:-translate-y-1 hover:border-[#DFA2BB] hover:shadow-lg"
                   >
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted text-primary">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FCE8F1] text-[#641C32]">
                       <Icon size={23} />
                     </div>
 
@@ -511,7 +571,7 @@ export default function Dashboard() {
                       {item.description}
                     </p>
 
-                    <div className="mt-5 flex items-center gap-2 text-xs font-semibold text-primary">
+                    <div className="mt-5 flex items-center gap-2 text-xs font-bold text-[#8B244B]">
                       EXPLORE NOW
                       <ArrowRight size={15} />
                     </div>
@@ -521,8 +581,9 @@ export default function Dashboard() {
             </div>
           </section>
 
-          <section className="rounded-2xl border border-dashed border-border bg-card p-7 text-center md:p-10">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted text-primary">
+          {/* Getting Started */}
+          <section className="rounded-[26px] border border-dashed border-[#DFA2BB] bg-gradient-to-r from-[#FFF0F6] via-white to-[#F2EBFF] p-7 text-center md:p-10">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#641C32] shadow-sm">
               <Plus size={23} />
             </div>
 
@@ -536,9 +597,11 @@ export default function Dashboard() {
             </p>
           </section>
 
-          <footer className="border-t border-border py-6 text-center text-xs text-gray-500">
+          {/* Footer */}
+          <footer className="border-t border-[#F1DCE5] py-6 text-center text-xs text-[#8B7180]">
             ZUNO © 2026 · DISCOVER. CONNECT. BUILD. GROW.
           </footer>
+
         </main>
       </div>
     </div>

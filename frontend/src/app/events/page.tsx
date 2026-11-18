@@ -13,11 +13,9 @@ import {
   Code2,
   Lightbulb,
   Rocket,
-  GraduationCap,
   Trophy,
   Users,
   CalendarCheck,
-  Clock3,
   Plus,
   ArrowUpRight,
   SlidersHorizontal,
@@ -25,7 +23,6 @@ import {
   FlaskConical,
   BriefcaseBusiness,
   BookOpen,
-  Laptop,
 } from "lucide-react";
 
 type EventTab = "discover" | "registered" | "hosted";
@@ -88,6 +85,7 @@ export default function EventsPage() {
   const [activeCategory, setActiveCategory] = useState("All Events");
   const [search, setSearch] = useState("");
   const [eventType, setEventType] = useState("All Formats");
+  const [menuOpen, setMenuOpen] = useState(true);
 
   const EmptyIcon = emptyContent[activeTab].icon;
 
@@ -99,16 +97,29 @@ export default function EventsPage() {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-background text-foreground">
-      <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 md:block">
-        <Sidebar />
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 hidden md:block transition-[width] duration-300 ease-in-out ${
+          menuOpen ? "w-64" : "w-[76px]"
+        }`}
+      >
+        <Sidebar
+          menuOpen={menuOpen}
+          onMenuToggle={() => setMenuOpen((previous) => !previous)}
+        />
       </aside>
 
-      <main className="min-h-screen w-full md:ml-64 md:w-[calc(100%-16rem)]">
+      <div
+        className={`min-h-screen w-full transition-[margin-left,width] duration-300 ease-in-out ${
+          menuOpen
+            ? "md:ml-64 md:w-[calc(100%-16rem)]"
+            : "md:ml-[76px] md:w-[calc(100%-76px)]"
+        }`}
+      >
         <div className="sticky top-0 z-40 w-full">
           <Topbar />
         </div>
 
-        <div className="mx-auto w-full max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
+        <main className="mx-auto w-full max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
 
           <div className="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
             <div>
@@ -128,7 +139,7 @@ export default function EventsPage() {
             </div>
 
             <div className="flex items-center gap-3 rounded-2xl border border-border bg-card px-5 py-3">
-              <CalendarDays size={21} className="text-muted-foreground" />
+              <CalendarDays size={21} className="text-[#8F5368]" />
               <div>
                 <p className="text-sm font-bold">Your next experience</p>
                 <p className="text-xs text-muted-foreground">
@@ -187,7 +198,7 @@ export default function EventsPage() {
                     onClick={() => setActiveTab(tab.key)}
                     className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
                       activeTab === tab.key
-                        ? "bg-[#641C32] text-white shadow-sm"
+                        ? "bg-[#641C32] text-white"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     }`}
                   >
@@ -202,13 +213,13 @@ export default function EventsPage() {
               <div className="mb-3 flex items-center gap-2">
                 <SlidersHorizontal
                   size={17}
-                  className="text-muted-foreground"
+                  className="text-[#8F5368]"
                 />
                 <h3 className="text-sm font-bold">
                   Explore by category
                 </h3>
                 <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                  10 categories
+                  {categories.length} categories
                 </span>
               </div>
 
@@ -228,7 +239,7 @@ export default function EventsPage() {
                       className={`flex min-h-[76px] items-center gap-3 rounded-xl border p-3 text-left transition ${
                         selected
                           ? "border-[#641C32] bg-[#641C32] text-white"
-                          : "border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
+                          : "border-border bg-card text-muted-foreground hover:border-[#8F5368]/50 hover:bg-muted hover:text-foreground"
                       }`}
                     >
                       <Icon size={19} className="shrink-0" />
@@ -260,7 +271,7 @@ export default function EventsPage() {
                 aria-label="Event format"
                 value={eventType}
                 onChange={(event) => setEventType(event.target.value)}
-                className="h-12 rounded-xl border border-border bg-card px-4 text-sm outline-none"
+                className="h-12 rounded-xl border border-border bg-card px-4 text-sm outline-none focus:border-[#8F5368]"
               >
                 <option>All Formats</option>
                 <option>Online</option>
@@ -296,7 +307,7 @@ export default function EventsPage() {
                 <button
                   type="button"
                   onClick={clearFilters}
-                  className="text-sm font-semibold text-muted-foreground transition hover:text-foreground"
+                  className="text-sm font-semibold text-[#8F5368] transition hover:text-[#641C32]"
                 >
                   Clear filters
                 </button>
@@ -304,11 +315,8 @@ export default function EventsPage() {
             </div>
 
             <div className="rounded-2xl border border-dashed border-border bg-card px-6 py-16 text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-muted">
-                <EmptyIcon
-                  size={30}
-                  className="text-muted-foreground"
-                />
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#F8F3F4] text-[#641C32] dark:bg-[#39212B] dark:text-[#D7A9B8]">
+                <EmptyIcon size={30} />
               </div>
 
               <h3 className="mt-5 text-xl font-bold">
@@ -355,7 +363,7 @@ export default function EventsPage() {
 
           <section className="mt-8 grid gap-4 sm:grid-cols-2">
             <div className="rounded-2xl border border-border bg-card p-5">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F8F3F4] text-[#641C32] dark:bg-[#39212B] dark:text-[#D7A9B8]">
                 <Globe2 size={21} />
               </div>
 
@@ -370,7 +378,7 @@ export default function EventsPage() {
             </div>
 
             <div className="rounded-2xl border border-border bg-card p-5">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F8F3F4] text-[#641C32] dark:bg-[#39212B] dark:text-[#D7A9B8]">
                 <MapPin size={21} />
               </div>
 
@@ -388,8 +396,8 @@ export default function EventsPage() {
           <div className="mt-10 border-t border-border pt-6 text-xs text-muted-foreground">
             ZUNO Events · Discover experiences. Create opportunities.
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

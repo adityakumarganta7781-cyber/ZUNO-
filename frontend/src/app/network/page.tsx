@@ -21,19 +21,33 @@ type Tab = "discover" | "connections" | "requests";
 export default function NetworkPage() {
   const [activeTab, setActiveTab] = useState<Tab>("discover");
   const [search, setSearch] = useState("");
+  const [menuOpen, setMenuOpen] = useState(true);
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-background text-foreground">
-      <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 md:block">
-        <Sidebar />
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 hidden md:block transition-[width] duration-300 ease-in-out ${
+          menuOpen ? "w-64" : "w-[76px]"
+        }`}
+      >
+        <Sidebar
+          menuOpen={menuOpen}
+          onMenuToggle={() => setMenuOpen((previous) => !previous)}
+        />
       </aside>
 
-      <main className="min-h-screen w-full md:ml-64 md:w-[calc(100%-16rem)]">
+      <div
+        className={`min-h-screen w-full transition-[margin-left,width] duration-300 ease-in-out ${
+          menuOpen
+            ? "md:ml-64 md:w-[calc(100%-16rem)]"
+            : "md:ml-[76px] md:w-[calc(100%-76px)]"
+        }`}
+      >
         <div className="sticky top-0 z-40 w-full">
           <Topbar />
         </div>
 
-        <div className="mx-auto w-full max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
+        <main className="mx-auto w-full max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
           <div className="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
             <div>
               <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border px-3 py-1.5 text-xs font-semibold tracking-wide text-muted-foreground">
@@ -62,7 +76,7 @@ export default function NetworkPage() {
             </div>
           </div>
 
-          <section className="relative mb-8 overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-[#641C32] via-[#762B45] to-[#8F5368] p-7 text-white sm:p-9">
+          <section className="relative mb-8 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#641C32] via-[#762B45] to-[#8F5368] p-7 text-white sm:p-9">
             <div className="relative z-10 max-w-2xl">
               <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-[#F3E5E9]">
                 Discover. Connect. Build. Grow.
@@ -126,7 +140,7 @@ export default function NetworkPage() {
                     onClick={() => setActiveTab(tab.key)}
                     className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
                       activeTab === tab.key
-                        ? "bg-[#641C32] text-white shadow-sm"
+                        ? "bg-[#641C32] text-white"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     }`}
                   >
@@ -247,8 +261,8 @@ export default function NetworkPage() {
           <div className="mt-10 border-t border-border pt-6 text-xs text-muted-foreground">
             ZUNO Network · A community built around real members.
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

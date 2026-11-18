@@ -3,7 +3,8 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+:root,
+.dark {
   color-scheme: light;
   --background: 255 255 255;
   --foreground: 48 27 34;
@@ -12,17 +13,6 @@
   --border: 232 218 222;
   --primary: 100 28 50;
   --muted-foreground: 125 101 109;
-}
-
-.dark {
-  color-scheme: dark;
-  --background: 30 17 23;
-  --foreground: 250 244 246;
-  --card: 43 26 33;
-  --muted: 57 36 44;
-  --border: 83 54 65;
-  --primary: 190 119 143;
-  --muted-foreground: 190 166 175;
 }
 
 * {

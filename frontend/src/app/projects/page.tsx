@@ -22,7 +22,6 @@ import {
   Globe,
   Lightbulb,
   X,
-  Bookmark,
   Plus,
   Sparkles,
 } from "lucide-react";
@@ -124,11 +123,13 @@ export default function ProjectsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [projectType, setProjectType] = useState("All Types");
   const [showCategories, setShowCategories] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(true);
 
   const filteredCategories = useMemo(() => {
-    return categories.filter((category) =>
-      category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      category.description.toLowerCase().includes(searchQuery.toLowerCase())
+    return categories.filter(
+      (category) =>
+        category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        category.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [searchQuery]);
 
@@ -144,29 +145,44 @@ export default function ProjectsPage() {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-background text-foreground">
-      <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 md:block">
-        <Sidebar />
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 hidden md:block transition-[width] duration-300 ease-in-out ${
+          menuOpen ? "w-64" : "w-[76px]"
+        }`}
+      >
+        <Sidebar
+          menuOpen={menuOpen}
+          onMenuToggle={() => setMenuOpen((previous) => !previous)}
+        />
       </aside>
 
-      <main className="min-h-screen w-full md:ml-64 md:w-[calc(100%-16rem)]">
+      <div
+        className={`min-h-screen w-full transition-[margin-left,width] duration-300 ease-in-out ${
+          menuOpen
+            ? "md:ml-64 md:w-[calc(100%-16rem)]"
+            : "md:ml-[76px] md:w-[calc(100%-76px)]"
+        }`}
+      >
         <div className="sticky top-0 z-40 w-full">
           <Topbar />
         </div>
 
-        <div className="mx-auto max-w-7xl space-y-8 px-5 py-8 sm:px-8 lg:px-10">
-
+        <main className="mx-auto w-full max-w-7xl space-y-8 px-5 py-8 sm:px-8 lg:px-10">
           <section className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-[#641C32]/10 via-background to-[#8F5368]/10 p-7 sm:p-10">
             <div className="absolute -right-12 -top-16 h-64 w-64 rounded-full bg-[#641C32]/10 blur-3xl" />
             <div className="absolute -bottom-20 right-1/3 h-48 w-48 rounded-full bg-[#8F5368]/10 blur-3xl" />
 
             <div className="relative z-10 max-w-2xl">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#641C32]/20 bg-[#641C32]/10 px-3 py-1.5 text-xs font-semibold text-[#641C32] dark:text-[#D9B8C4]">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#641C32]/20 bg-[#641C32]/10 px-3 py-1.5 text-xs font-semibold text-[#641C32] dark:text-[#D7A9B8]">
                 <Sparkles size={14} />
                 CREATE. INNOVATE. COLLABORATE.
               </div>
 
               <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                Ideas become <span className="text-[#641C32]">innovation.</span>
+                Ideas become{" "}
+                <span className="text-[#641C32] dark:text-[#D7A9B8]">
+                  innovation.
+                </span>
               </h1>
 
               <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">
@@ -178,7 +194,7 @@ export default function ProjectsPage() {
               <div className="mt-7 flex flex-wrap gap-3">
                 <button
                   onClick={() => setActiveTab("Explore Projects")}
-                  className="inline-flex items-center gap-2 rounded-xl bg-[#641C32] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#4F1628]"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#641C32] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#4D1426]"
                 >
                   <FolderKanban size={17} />
                   Explore Projects
@@ -199,7 +215,7 @@ export default function ProjectsPage() {
           <section className="space-y-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-[#641C32]">
+                <p className="text-xs font-semibold uppercase tracking-widest text-[#641C32] dark:text-[#D7A9B8]">
                   Explore by discipline
                 </p>
                 <h2 className="mt-2 text-2xl font-bold tracking-tight">
@@ -231,8 +247,8 @@ export default function ProjectsPage() {
                       onClick={() => setSelectedCategory(category.name)}
                       className={`group rounded-2xl border p-4 text-left transition duration-200 hover:-translate-y-1 hover:shadow-md ${
                         isSelected
-                          ? "border-[#641C32] bg-[#641C32]/10 shadow-sm"
-                          : "border-border bg-card hover:border-[#641C32]/40"
+                          ? "border-[#8F5368] bg-[#641C32]/10 shadow-sm"
+                          : "border-border bg-card hover:border-[#8F5368]/50"
                       }`}
                     >
                       <div className="flex items-start justify-between">
@@ -284,7 +300,7 @@ export default function ProjectsPage() {
                   onClick={() => setActiveTab(tab)}
                   className={`border-b-2 px-4 py-3 text-sm font-semibold transition ${
                     activeTab === tab
-                      ? "border-[#641C32] text-[#641C32]"
+                      ? "border-[#641C32] text-[#641C32] dark:text-[#D7A9B8]"
                       : "border-transparent text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -299,15 +315,15 @@ export default function ProjectsPage() {
                   {activeTab === "Explore Projects"
                     ? "Explore Projects"
                     : activeTab === "My Projects"
-                    ? "My Projects"
-                    : "Find Collaborations"}
+                      ? "My Projects"
+                      : "Find Collaborations"}
                 </h2>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {activeTab === "Explore Projects"
                     ? "Discover ideas and work from the ZUNO community."
                     : activeTab === "My Projects"
-                    ? "Your published and saved project workspace."
-                    : "Find projects looking for collaborators."}
+                      ? "Your published and saved project workspace."
+                      : "Find projects looking for collaborators."}
                 </p>
               </div>
 
@@ -344,7 +360,8 @@ export default function ProjectsPage() {
               <span className="text-xs font-medium text-muted-foreground">
                 Selected category:
               </span>
-              <span className="inline-flex items-center gap-2 rounded-full bg-[#641C32]/10 px-3 py-1.5 text-xs font-semibold text-[#641C32] dark:text-[#D9B8C4]">
+
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#641C32]/10 px-3 py-1.5 text-xs font-semibold text-[#641C32] dark:text-[#D7A9B8]">
                 {selectedCategory}
                 {selectedCategory !== "All Projects" && (
                   <button
@@ -367,7 +384,7 @@ export default function ProjectsPage() {
                 searchQuery !== "") && (
                 <button
                   onClick={resetFilters}
-                  className="text-xs font-semibold text-[#641C32] hover:underline"
+                  className="text-xs font-semibold text-[#641C32] hover:underline dark:text-[#D7A9B8]"
                 >
                   Clear filters
                 </button>
@@ -375,7 +392,7 @@ export default function ProjectsPage() {
             </div>
 
             <div className="rounded-2xl border border-dashed border-border bg-card/50 px-5 py-12 text-center sm:px-10">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#641C32]/10 text-[#641C32]">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#641C32]/10 text-[#641C32] dark:text-[#D7A9B8]">
                 {activeTab === "My Projects" ? (
                   <FolderKanban size={27} />
                 ) : activeTab === "Find Collaborations" ? (
@@ -389,16 +406,16 @@ export default function ProjectsPage() {
                 {activeTab === "My Projects"
                   ? "Your project space is ready"
                   : activeTab === "Find Collaborations"
-                  ? "Find your next collaboration"
-                  : "Discover something innovative"}
+                    ? "Find your next collaboration"
+                    : "Discover something innovative"}
               </h3>
 
               <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
                 {activeTab === "My Projects"
                   ? "Projects you create and publish will appear here. Build your portfolio and showcase your work."
                   : activeTab === "Find Collaborations"
-                  ? "Projects seeking team members will appear here. Connect with students who share your interests and skills."
-                  : "Projects from registered ZUNO members will appear here. Explore different disciplines and find ideas worth building."}
+                    ? "Projects seeking team members will appear here. Connect with students who share your interests and skills."
+                    : "Projects from registered ZUNO members will appear here. Explore different disciplines and find ideas worth building."}
               </p>
 
               <p className="mt-5 text-xs text-muted-foreground">
@@ -410,7 +427,7 @@ export default function ProjectsPage() {
 
           <section className="rounded-2xl border border-border bg-card p-5 sm:p-6">
             <div className="flex items-start gap-4">
-              <div className="rounded-xl bg-[#641C32]/10 p-3 text-[#641C32]">
+              <div className="rounded-xl bg-[#641C32]/10 p-3 text-[#641C32] dark:text-[#D7A9B8]">
                 <Users size={23} />
               </div>
               <div>
@@ -427,8 +444,8 @@ export default function ProjectsPage() {
           <footer className="border-t border-border py-5 text-center text-xs text-muted-foreground">
             ZUNO · Discover. Connect. Build. Grow.
           </footer>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

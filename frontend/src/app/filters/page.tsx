@@ -80,12 +80,15 @@ const initialFilters = {
   rating: "Any rating",
 };
 
+type FilterKey = "category" | "contentType" | "module";
+
 export default function FiltersPage() {
   const [filters, setFilters] = useState(initialFilters);
   const [applied, setApplied] = useState(false);
   const [search, setSearch] = useState("");
+  const [menuOpen, setMenuOpen] = useState(true);
 
-  const toggleOption = (key: "category" | "contentType" | "module", option: string) => {
+  const toggleOption = (key: FilterKey, option: string) => {
     setFilters((previous) => ({
       ...previous,
       [key]: previous[key].includes(option)
@@ -115,16 +118,29 @@ export default function FiltersPage() {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-background text-foreground">
-      <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 md:block">
-        <Sidebar />
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 hidden md:block transition-[width] duration-300 ease-in-out ${
+          menuOpen ? "w-64" : "w-[76px]"
+        }`}
+      >
+        <Sidebar
+          menuOpen={menuOpen}
+          onMenuToggle={() => setMenuOpen((previous) => !previous)}
+        />
       </aside>
 
-      <main className="min-h-screen w-full md:ml-64 md:w-[calc(100%-16rem)]">
+      <div
+        className={`min-h-screen w-full transition-[margin-left,width] duration-300 ease-in-out ${
+          menuOpen
+            ? "md:ml-64 md:w-[calc(100%-16rem)]"
+            : "md:ml-[76px] md:w-[calc(100%-76px)]"
+        }`}
+      >
         <div className="sticky top-0 z-40 w-full">
           <Topbar />
         </div>
 
-        <div className="mx-auto max-w-7xl space-y-7 px-5 py-8 md:px-8">
+        <main className="mx-auto w-full max-w-7xl space-y-7 px-5 py-8 md:px-8">
           <section className="rounded-3xl bg-gradient-to-br from-[#641C32] via-[#762B45] to-[#8F5368] p-8 text-white">
             <div className="flex items-center gap-3">
               <SlidersHorizontal size={25} />
@@ -132,9 +148,11 @@ export default function FiltersPage() {
                 ZUNO PERSONALIZATION
               </span>
             </div>
+
             <h1 className="mt-4 text-3xl font-extrabold md:text-4xl">
               Discover what matters to you.
             </h1>
+
             <p className="mt-3 max-w-2xl text-sm leading-7 text-white/85 md:text-base">
               Use centralized filters to narrow down content, opportunities,
               events, projects, courses and resources across ZUNO.
@@ -144,10 +162,11 @@ export default function FiltersPage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-xl font-bold">All Platform Filters</h2>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-muted-foreground">
                 Select your preferences to refine your discovery experience.
               </p>
             </div>
+
             <span className="rounded-full bg-[#F8F3F4] px-4 py-2 text-sm font-semibold text-[#4D1527] dark:bg-[#3B202B] dark:text-[#D8AAB9]">
               {selectedCount} selected
             </span>
@@ -171,12 +190,12 @@ export default function FiltersPage() {
             const visibleOptions = section.options.filter((option) =>
               option.toLowerCase().includes(search.toLowerCase())
             );
-            const key = section.key as "category" | "contentType" | "module";
+            const key = section.key as FilterKey;
 
             return (
               <section
                 key={section.key}
-                className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900 md:p-6"
+                className="rounded-2xl border border-border bg-card p-5 md:p-6"
               >
                 <h3 className="mb-5 flex items-center gap-3 font-bold">
                   <span className="rounded-xl bg-[#F8F3F4] p-2 text-[#641C32] dark:bg-[#3B202B]">
@@ -192,11 +211,12 @@ export default function FiltersPage() {
                     return (
                       <button
                         key={option}
+                        type="button"
                         onClick={() => toggleOption(key, option)}
                         className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition ${
                           checked
                             ? "border-[#8F5368] bg-[#F8F3F4] text-[#4D1527] dark:bg-[#3B202B] dark:text-[#D8AAB9]"
-                            : "border-gray-200 text-gray-600 hover:border-[#D8AAB9] dark:border-gray-700 dark:text-gray-300"
+                            : "border-border text-muted-foreground hover:border-[#D8AAB9]"
                         }`}
                       >
                         {checked && <Check size={15} />}
@@ -204,12 +224,18 @@ export default function FiltersPage() {
                       </button>
                     );
                   })}
+
+                  {visibleOptions.length === 0 && (
+                    <p className="text-sm text-muted-foreground">
+                      No matching options found.
+                    </p>
+                  )}
                 </div>
               </section>
             );
           })}
 
-          <section className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900 md:p-6">
+          <section className="rounded-2xl border border-border bg-card p-5 md:p-6">
             <h3 className="mb-5 flex items-center gap-3 font-bold">
               <Store size={21} className="text-[#641C32]" />
               Pricing
@@ -219,14 +245,18 @@ export default function FiltersPage() {
               {["All", "Free", "Paid", "Premium", "Subscription"].map((item) => (
                 <button
                   key={item}
+                  type="button"
                   onClick={() => {
-                    setFilters({ ...filters, pricing: item });
+                    setFilters((previous) => ({
+                      ...previous,
+                      pricing: item,
+                    }));
                     setApplied(false);
                   }}
-                  className={`rounded-xl border px-4 py-2.5 text-sm font-medium ${
+                  className={`rounded-xl border px-4 py-2.5 text-sm font-medium transition ${
                     filters.pricing === item
                       ? "border-[#8F5368] bg-[#F8F3F4] text-[#4D1527] dark:bg-[#3B202B] dark:text-[#D8AAB9]"
-                      : "border-gray-200 text-gray-600 dark:border-gray-700 dark:text-gray-300"
+                      : "border-border text-muted-foreground"
                   }`}
                 >
                   {item}
@@ -235,7 +265,7 @@ export default function FiltersPage() {
             </div>
           </section>
 
-          <section className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900 md:p-6">
+          <section className="rounded-2xl border border-border bg-card p-5 md:p-6">
             <h3 className="mb-5 flex items-center gap-3 font-bold">
               <GraduationCap size={21} className="text-[#641C32]" />
               Education & Learning
@@ -243,16 +273,19 @@ export default function FiltersPage() {
 
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-gray-500">
+                <label className="text-xs font-semibold text-muted-foreground">
                   Course Level
                 </label>
                 <select
                   value={filters.level}
                   onChange={(event) => {
-                    setFilters({ ...filters, level: event.target.value });
+                    setFilters((previous) => ({
+                      ...previous,
+                      level: event.target.value,
+                    }));
                     setApplied(false);
                   }}
-                  className="w-full rounded-xl border border-gray-200 bg-transparent p-3 text-sm dark:border-gray-700"
+                  className="w-full rounded-xl border border-border bg-background p-3 text-sm"
                 >
                   {["All", "Beginner", "Intermediate", "Advanced"].map((item) => (
                     <option key={item}>{item}</option>
@@ -261,18 +294,27 @@ export default function FiltersPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-gray-500">
+                <label className="text-xs font-semibold text-muted-foreground">
                   Duration
                 </label>
                 <select
                   value={filters.duration}
                   onChange={(event) => {
-                    setFilters({ ...filters, duration: event.target.value });
+                    setFilters((previous) => ({
+                      ...previous,
+                      duration: event.target.value,
+                    }));
                     setApplied(false);
                   }}
-                  className="w-full rounded-xl border border-gray-200 bg-transparent p-3 text-sm dark:border-gray-700"
+                  className="w-full rounded-xl border border-border bg-background p-3 text-sm"
                 >
-                  {["All", "Under 1 week", "1–4 weeks", "1–3 months", "3+ months"].map((item) => (
+                  {[
+                    "All",
+                    "Under 1 week",
+                    "1–4 weeks",
+                    "1–3 months",
+                    "3+ months",
+                  ].map((item) => (
                     <option key={item}>{item}</option>
                   ))}
                 </select>
@@ -280,7 +322,7 @@ export default function FiltersPage() {
             </div>
           </section>
 
-          <section className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900 md:p-6">
+          <section className="rounded-2xl border border-border bg-card p-5 md:p-6">
             <h3 className="mb-5 flex items-center gap-3 font-bold">
               <BriefcaseBusiness size={21} className="text-[#641C32]" />
               Location & Format
@@ -288,31 +330,37 @@ export default function FiltersPage() {
 
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-gray-500">
+                <label className="text-xs font-semibold text-muted-foreground">
                   University
                 </label>
                 <input
                   value={filters.university}
                   onChange={(event) => {
-                    setFilters({ ...filters, university: event.target.value });
+                    setFilters((previous) => ({
+                      ...previous,
+                      university: event.target.value,
+                    }));
                     setApplied(false);
                   }}
                   placeholder="Enter university name"
-                  className="w-full rounded-xl border border-gray-200 bg-transparent p-3 text-sm dark:border-gray-700"
+                  className="w-full rounded-xl border border-border bg-background p-3 text-sm"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-gray-500">
+                <label className="text-xs font-semibold text-muted-foreground">
                   Format
                 </label>
                 <select
                   value={filters.format}
                   onChange={(event) => {
-                    setFilters({ ...filters, format: event.target.value });
+                    setFilters((previous) => ({
+                      ...previous,
+                      format: event.target.value,
+                    }));
                     setApplied(false);
                   }}
-                  className="w-full rounded-xl border border-gray-200 bg-transparent p-3 text-sm dark:border-gray-700"
+                  className="w-full rounded-xl border border-border bg-background p-3 text-sm"
                 >
                   {["All", "Online", "Offline", "Hybrid", "Self-paced", "Live"].map((item) => (
                     <option key={item}>{item}</option>
@@ -321,16 +369,19 @@ export default function FiltersPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-gray-500">
+                <label className="text-xs font-semibold text-muted-foreground">
                   Date
                 </label>
                 <select
                   value={filters.date}
                   onChange={(event) => {
-                    setFilters({ ...filters, date: event.target.value });
+                    setFilters((previous) => ({
+                      ...previous,
+                      date: event.target.value,
+                    }));
                     setApplied(false);
                   }}
-                  className="w-full rounded-xl border border-gray-200 bg-transparent p-3 text-sm dark:border-gray-700"
+                  className="w-full rounded-xl border border-border bg-background p-3 text-sm"
                 >
                   {["Any time", "Today", "This week", "This month", "Upcoming"].map((item) => (
                     <option key={item}>{item}</option>
@@ -339,16 +390,19 @@ export default function FiltersPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-gray-500">
+                <label className="text-xs font-semibold text-muted-foreground">
                   Minimum Rating
                 </label>
                 <select
                   value={filters.rating}
                   onChange={(event) => {
-                    setFilters({ ...filters, rating: event.target.value });
+                    setFilters((previous) => ({
+                      ...previous,
+                      rating: event.target.value,
+                    }));
                     setApplied(false);
                   }}
-                  className="w-full rounded-xl border border-gray-200 bg-transparent p-3 text-sm dark:border-gray-700"
+                  className="w-full rounded-xl border border-border bg-background p-3 text-sm"
                 >
                   {["Any rating", "3+ stars", "4+ stars", "4.5+ stars"].map((item) => (
                     <option key={item}>{item}</option>
@@ -358,11 +412,12 @@ export default function FiltersPage() {
             </div>
           </section>
 
-          <section className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900 md:p-6">
+          <section className="rounded-2xl border border-border bg-card p-5 md:p-6">
             <h3 className="mb-5 flex items-center gap-3 font-bold">
               <CalendarDays size={21} className="text-[#641C32]" />
               More ZUNO Areas
             </h3>
+
             <div className="grid gap-3 sm:grid-cols-2">
               {[
                 { name: "Events", icon: CalendarDays },
@@ -371,10 +426,11 @@ export default function FiltersPage() {
                 { name: "Projects", icon: FolderKanban },
               ].map((item) => {
                 const Icon = item.icon;
+
                 return (
                   <div
                     key={item.name}
-                    className="flex items-center gap-3 rounded-xl bg-gray-50 p-4 text-sm font-medium dark:bg-gray-800"
+                    className="flex items-center gap-3 rounded-xl bg-muted p-4 text-sm font-medium"
                   >
                     <Icon size={19} className="text-[#641C32]" />
                     {item.name}
@@ -391,24 +447,26 @@ export default function FiltersPage() {
             </p>
           )}
 
-          <div className="sticky bottom-0 flex flex-wrap justify-between gap-3 border-t border-gray-200 bg-background/95 py-5 backdrop-blur dark:border-gray-800">
+          <div className="sticky bottom-0 flex flex-wrap justify-between gap-3 border-t border-border bg-background/95 py-5 backdrop-blur">
             <button
+              type="button"
               onClick={resetFilters}
-              className="flex items-center gap-2 rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold dark:border-gray-700"
+              className="flex items-center gap-2 rounded-xl border border-border px-5 py-3 text-sm font-semibold transition hover:bg-muted"
             >
               <RotateCcw size={17} />
               Reset All
             </button>
 
             <button
+              type="button"
               onClick={() => setApplied(true)}
-              className="rounded-xl bg-[#641C32] px-7 py-3 text-sm font-semibold text-white hover:bg-[#4D1527]"
+              className="rounded-xl bg-[#641C32] px-7 py-3 text-sm font-semibold text-white transition hover:bg-[#4D1527]"
             >
               Apply Preferences
             </button>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

@@ -2,7 +2,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import Sidebar from "@/components/sidebar";
 import Topbar from "@/components/topbar";
 import {
@@ -64,6 +63,7 @@ export default function MarketplacePage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(initialForm);
   const [notice, setNotice] = useState("");
+  const [menuOpen, setMenuOpen] = useState(true);
 
   const filteredListings = useMemo(() => {
     const results = listings.filter((listing) => {
@@ -109,20 +109,33 @@ export default function MarketplacePage() {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-background text-foreground">
-      <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 md:block">
-        <Sidebar />
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 hidden md:block transition-[width] duration-300 ease-in-out ${
+          menuOpen ? "w-64" : "w-[76px]"
+        }`}
+      >
+        <Sidebar
+          menuOpen={menuOpen}
+          onMenuToggle={() => setMenuOpen((previous) => !previous)}
+        />
       </aside>
 
-      <main className="min-h-screen w-full md:ml-64 md:w-[calc(100%-16rem)]">
+      <div
+        className={`min-h-screen w-full transition-[margin-left,width] duration-300 ease-in-out ${
+          menuOpen
+            ? "md:ml-64 md:w-[calc(100%-16rem)]"
+            : "md:ml-[76px] md:w-[calc(100%-76px)]"
+        }`}
+      >
         <div className="sticky top-0 z-40 w-full">
           <Topbar />
         </div>
 
-        <div className="mx-auto max-w-7xl space-y-8 px-5 py-8 md:px-8">
+        <main className="mx-auto max-w-7xl space-y-8 px-5 py-8 md:px-8">
           <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#641C32] via-[#762B45] to-[#8F5368] p-8 text-white md:p-10">
             <div className="relative z-10 flex flex-col justify-between gap-6 md:flex-row md:items-center">
               <div className="max-w-2xl">
-                <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-card/15 px-4 py-2 text-xs font-bold tracking-wide">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-xs font-bold tracking-wide">
                   <Store size={16} />
                   ZUNO MARKETPLACE
                 </div>
@@ -145,7 +158,7 @@ export default function MarketplacePage() {
                         .getElementById("marketplace-listings")
                         ?.scrollIntoView({ behavior: "smooth" });
                     }}
-                    className="inline-flex items-center gap-2 rounded-xl bg-card px-5 py-3 text-sm font-bold text-[#641C32] hover:bg-[#F8F3F4]"
+                    className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-[#641C32] hover:bg-[#F8F3F4]"
                   >
                     Explore Listings
                     <ArrowRight size={17} />
@@ -156,7 +169,7 @@ export default function MarketplacePage() {
                       setNotice("");
                       setShowForm(true);
                     }}
-                    className="inline-flex items-center gap-2 rounded-xl border border-white/40 bg-card/10 px-5 py-3 text-sm font-semibold text-white hover:bg-card/20"
+                    className="inline-flex items-center gap-2 rounded-xl border border-white/40 bg-white/10 px-5 py-3 text-sm font-semibold text-white hover:bg-white/20"
                   >
                     <Plus size={18} />
                     Create Listing
@@ -195,7 +208,7 @@ export default function MarketplacePage() {
               return (
                 <div
                   key={item.label}
-                  className="flex items-start gap-4 rounded-2xl border border-border bg-card p-5 dark:border-border dark:bg-card"
+                  className="flex items-start gap-4 rounded-2xl border border-border bg-card p-5"
                 >
                   <div className="rounded-xl bg-[#F8F3F4] p-3 text-[#641C32] dark:bg-[#39212B]">
                     <Icon size={22} />
@@ -231,7 +244,7 @@ export default function MarketplacePage() {
                     className={`flex flex-col items-center gap-3 rounded-2xl border p-5 text-center transition ${
                       active
                         ? "border-[#641C32] bg-[#F8F3F4] text-[#641C32] dark:bg-[#39212B] dark:text-[#D9B8C4]"
-                        : "border-border bg-card hover:border-[#C9AAB5] dark:border-border dark:bg-card"
+                        : "border-border bg-card hover:border-[#C9AAB5]"
                     }`}
                   >
                     <Icon size={25} />
@@ -257,7 +270,7 @@ export default function MarketplacePage() {
                   className={`rounded-xl px-5 py-3 text-sm font-semibold transition ${
                     tab === item
                       ? "bg-[#641C32] text-white"
-                      : "border border-border bg-card text-muted-foreground hover:border-[#C9AAB5] dark:border-border dark:bg-card dark:text-muted-foreground"
+                      : "border border-border bg-card text-muted-foreground hover:border-[#C9AAB5]"
                   }`}
                 >
                   {item}
@@ -275,7 +288,7 @@ export default function MarketplacePage() {
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Search products, services, creators..."
-                  className="w-full rounded-xl border border-border bg-card py-4 pl-12 pr-4 text-sm outline-none focus:border-[#641C32] dark:border-border dark:bg-card"
+                  className="w-full rounded-xl border border-border bg-card py-4 pl-12 pr-4 text-sm outline-none focus:border-[#641C32]"
                 />
               </div>
 
@@ -287,7 +300,7 @@ export default function MarketplacePage() {
                 <select
                   value={sort}
                   onChange={(event) => setSort(event.target.value)}
-                  className="w-full appearance-none rounded-xl border border-border bg-card py-4 pl-11 pr-4 text-sm dark:border-border dark:bg-card"
+                  className="w-full appearance-none rounded-xl border border-border bg-card py-4 pl-11 pr-4 text-sm"
                 >
                   <option>Newest First</option>
                   <option>Price: Low to High</option>
@@ -312,7 +325,7 @@ export default function MarketplacePage() {
             </div>
 
             {filteredListings.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-border bg-card px-6 py-16 text-center dark:border-border dark:bg-card">
+              <div className="rounded-2xl border border-dashed border-border bg-card px-6 py-16 text-center">
                 <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#F8F3F4] text-[#641C32] dark:bg-[#39212B]">
                   {tab === "Saved Listings" ? (
                     <Heart size={30} />
@@ -352,7 +365,7 @@ export default function MarketplacePage() {
                 {filteredListings.map((listing) => (
                   <article
                     key={listing.id}
-                    className="rounded-2xl border border-border bg-card p-5 dark:border-border dark:bg-card"
+                    className="rounded-2xl border border-border bg-card p-5"
                   >
                     <div className="flex justify-between gap-3">
                       <span className="text-xs font-bold text-[#641C32]">
@@ -412,17 +425,17 @@ export default function MarketplacePage() {
             )}
           </section>
 
-          <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground dark:border-border">
+          <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
             ZUNO · Discover. Connect. Build. Grow.
           </footer>
-        </div>
-      </main>
+        </main>
+      </div>
 
       {showForm && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/60 p-4">
           <form
             onSubmit={submitListing}
-            className="my-8 w-full max-w-xl space-y-4 rounded-2xl bg-card p-6 text-foreground shadow-2xl dark:bg-card dark:text-foreground"
+            className="my-8 w-full max-w-xl space-y-4 rounded-2xl bg-card p-6 text-foreground shadow-2xl"
           >
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold">
@@ -449,7 +462,7 @@ export default function MarketplacePage() {
               onChange={(event) =>
                 setForm({ ...form, title: event.target.value })
               }
-              className="w-full rounded-xl border border-border bg-transparent p-3 text-sm dark:border-border"
+              className="w-full rounded-xl border border-border bg-transparent p-3 text-sm"
             />
 
             <textarea
@@ -460,7 +473,7 @@ export default function MarketplacePage() {
               onChange={(event) =>
                 setForm({ ...form, description: event.target.value })
               }
-              className="w-full rounded-xl border border-border bg-transparent p-3 text-sm dark:border-border"
+              className="w-full rounded-xl border border-border bg-transparent p-3 text-sm"
             />
 
             <select
@@ -468,7 +481,7 @@ export default function MarketplacePage() {
               onChange={(event) =>
                 setForm({ ...form, category: event.target.value })
               }
-              className="w-full rounded-xl border border-border bg-transparent p-3 text-sm dark:border-border"
+              className="w-full rounded-xl border border-border bg-transparent p-3 text-sm"
             >
               {categories.slice(1).map((item) => (
                 <option key={item.name}>{item.name}</option>
@@ -485,7 +498,7 @@ export default function MarketplacePage() {
                 onChange={(event) =>
                   setForm({ ...form, price: event.target.value })
                 }
-                className="w-full rounded-xl border border-border bg-transparent p-3 text-sm dark:border-border"
+                className="w-full rounded-xl border border-border bg-transparent p-3 text-sm"
               />
 
               <select
@@ -493,7 +506,7 @@ export default function MarketplacePage() {
                 onChange={(event) =>
                   setForm({ ...form, currency: event.target.value })
                 }
-                className="w-full rounded-xl border border-border bg-transparent p-3 text-sm dark:border-border"
+                className="w-full rounded-xl border border-border bg-transparent p-3 text-sm"
               >
                 <option value="INR">INR</option>
                 <option value="USD">USD</option>
@@ -509,7 +522,7 @@ export default function MarketplacePage() {
               onChange={(event) =>
                 setForm({ ...form, university: event.target.value })
               }
-              className="w-full rounded-xl border border-border bg-transparent p-3 text-sm dark:border-border"
+              className="w-full rounded-xl border border-border bg-transparent p-3 text-sm"
             />
 
             <input
@@ -520,7 +533,7 @@ export default function MarketplacePage() {
               onChange={(event) =>
                 setForm({ ...form, contact: event.target.value })
               }
-              className="w-full rounded-xl border border-border bg-transparent p-3 text-sm dark:border-border"
+              className="w-full rounded-xl border border-border bg-transparent p-3 text-sm"
             />
 
             <button

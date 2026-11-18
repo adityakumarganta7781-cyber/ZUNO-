@@ -111,14 +111,18 @@ const tabs = ["Discover", "Saved", "My Applications"];
 
 export default function OpportunitiesPage() {
   const [activeTab, setActiveTab] = useState("Discover");
-  const [selectedCategory, setSelectedCategory] = useState("All Opportunities");
+  const [selectedCategory, setSelectedCategory] =
+    useState("All Opportunities");
   const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("All Locations");
-  const [compensation, setCompensation] = useState("Any Compensation");
-  const [experience, setExperience] = useState("All Experience Levels");
+  const [compensation, setCompensation] =
+    useState("Any Compensation");
+  const [experience, setExperience] =
+    useState("All Experience Levels");
   const [deadline, setDeadline] = useState("Any Deadline");
   const [showFilters, setShowFilters] = useState(false);
   const [showCategories, setShowCategories] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(true);
 
   const filteredCategories = useMemo(() => {
     return categories.filter(
@@ -147,32 +151,44 @@ export default function OpportunitiesPage() {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-background text-foreground">
-      <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 md:block">
-        <Sidebar />
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 hidden md:block transition-[width] duration-300 ease-in-out ${
+          menuOpen ? "w-64" : "w-[76px]"
+        }`}
+      >
+        <Sidebar
+          menuOpen={menuOpen}
+          onMenuToggle={() => setMenuOpen((previous) => !previous)}
+        />
       </aside>
 
-      <main className="min-h-screen w-full md:ml-64 md:w-[calc(100%-16rem)]">
+      <div
+        className={`min-h-screen w-full transition-[margin-left,width] duration-300 ease-in-out ${
+          menuOpen
+            ? "md:ml-64 md:w-[calc(100%-16rem)]"
+            : "md:ml-[76px] md:w-[calc(100%-76px)]"
+        }`}
+      >
         <div className="sticky top-0 z-40 w-full">
           <Topbar />
         </div>
 
-        <div className="mx-auto max-w-7xl space-y-8 px-5 py-8 sm:px-8 lg:px-10">
-
-          {/* HERO SECTION */}
-
+        <main className="mx-auto w-full max-w-7xl space-y-8 px-5 py-8 sm:px-8 lg:px-10">
           <section className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-[#641C32]/10 via-background to-[#8F5368]/10 p-7 sm:p-10">
             <div className="absolute -right-16 -top-20 h-72 w-72 rounded-full bg-[#641C32]/10 blur-3xl" />
             <div className="absolute -bottom-20 right-1/3 h-56 w-56 rounded-full bg-[#8F5368]/10 blur-3xl" />
 
             <div className="relative z-10 max-w-2xl">
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#641C32]/20 bg-[#641C32]/10 px-3 py-1.5 text-xs font-semibold text-[#641C32] dark:text-[#D9B8C4]">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#641C32]/20 bg-[#641C32]/10 px-3 py-1.5 text-xs font-semibold text-[#641C32] dark:text-[#D7A9B8]">
                 <Sparkles size={14} />
                 DISCOVER YOUR NEXT OPPORTUNITY
               </div>
 
               <h1 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">
                 Your next big step
-                <span className="text-[#641C32]"> starts here.</span>
+                <span className="text-[#641C32] dark:text-[#D7A9B8]">
+                  {" "}starts here.
+                </span>
               </h1>
 
               <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">
@@ -183,7 +199,7 @@ export default function OpportunitiesPage() {
               <div className="mt-7 flex flex-wrap gap-3">
                 <button
                   onClick={() => setActiveTab("Discover")}
-                  className="inline-flex items-center gap-2 rounded-xl bg-[#641C32] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#4F1628]"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#641C32] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#4D1426]"
                 >
                   <Search size={17} />
                   Explore Opportunities
@@ -200,8 +216,6 @@ export default function OpportunitiesPage() {
               </div>
             </div>
           </section>
-
-          {/* QUICK FEATURES */}
 
           <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {[
@@ -231,10 +245,10 @@ export default function OpportunitiesPage() {
               return (
                 <div
                   key={item.title}
-                  className="rounded-2xl border border-border bg-card p-4 transition hover:border-[#641C32]/40"
+                  className="rounded-2xl border border-border bg-card p-4 transition hover:border-[#8F5368]/50"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="rounded-xl bg-[#641C32]/10 p-3 text-[#641C32]">
+                    <div className="rounded-xl bg-[#641C32]/10 p-3 text-[#641C32] dark:text-[#D7A9B8]">
                       <Icon size={20} />
                     </div>
                     <div>
@@ -249,19 +263,17 @@ export default function OpportunitiesPage() {
             })}
           </section>
 
-          {/* AI MATCHING */}
-
           <section className="relative overflow-hidden rounded-2xl border border-[#641C32]/20 bg-gradient-to-r from-[#641C32]/10 to-[#8F5368]/10 p-5 sm:p-7">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-4">
-                <div className="rounded-2xl bg-[#8F5368]/15 p-3 text-[#641C32]">
+                <div className="rounded-2xl bg-[#641C32]/10 p-3 text-[#641C32] dark:text-[#D7A9B8]">
                   <BrainCircuit size={27} />
                 </div>
 
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
                     <h2 className="text-lg font-bold">ZUNO Intelligence</h2>
-                    <span className="rounded-full bg-[#8F5368]/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#641C32] dark:text-[#D9B8C4]">
+                    <span className="rounded-full bg-[#641C32]/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#641C32] dark:text-[#D7A9B8]">
                       AI-powered
                     </span>
                   </div>
@@ -299,12 +311,10 @@ export default function OpportunitiesPage() {
             </div>
           </section>
 
-          {/* CATEGORIES */}
-
           <section className="space-y-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-[#641C32]">
+                <p className="text-xs font-semibold uppercase tracking-widest text-[#641C32] dark:text-[#D7A9B8]">
                   Explore possibilities
                 </p>
                 <h2 className="mt-2 text-2xl font-bold tracking-tight">
@@ -339,8 +349,8 @@ export default function OpportunitiesPage() {
                       }}
                       className={`group rounded-2xl border p-5 text-left transition duration-200 hover:-translate-y-1 hover:shadow-md ${
                         isSelected
-                          ? "border-[#641C32] bg-[#641C32]/10"
-                          : "border-border bg-card hover:border-[#641C32]/40"
+                          ? "border-[#8F5368] bg-[#641C32]/10"
+                          : "border-border bg-card hover:border-[#8F5368]/50"
                       }`}
                     >
                       <div className="flex items-start justify-between">
@@ -384,8 +394,6 @@ export default function OpportunitiesPage() {
             )}
           </section>
 
-          {/* DISCOVERY AND APPLICATION TABS */}
-
           <section className="space-y-5">
             <div className="flex flex-wrap gap-2 border-b border-border">
               {tabs.map((tab) => (
@@ -394,7 +402,7 @@ export default function OpportunitiesPage() {
                   onClick={() => setActiveTab(tab)}
                   className={`border-b-2 px-4 py-3 text-sm font-semibold transition ${
                     activeTab === tab
-                      ? "border-[#641C32] text-[#641C32]"
+                      ? "border-[#641C32] text-[#641C32] dark:text-[#D7A9B8]"
                       : "border-transparent text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -530,13 +538,13 @@ export default function OpportunitiesPage() {
                     <div className="flex flex-wrap items-center gap-3 sm:col-span-2 xl:col-span-4">
                       <button
                         onClick={resetFilters}
-                        className="text-sm font-semibold text-[#641C32] hover:underline"
+                        className="text-sm font-semibold text-[#641C32] hover:underline dark:text-[#D7A9B8]"
                       >
                         Reset all filters
                       </button>
                       <button
                         onClick={() => setShowFilters(false)}
-                        className="rounded-lg bg-[#641C32] px-4 py-2 text-sm font-semibold text-white hover:bg-[#4F1628]"
+                        className="rounded-lg bg-[#641C32] px-4 py-2 text-sm font-semibold text-white hover:bg-[#4D1426]"
                       >
                         Done
                       </button>
@@ -549,7 +557,7 @@ export default function OpportunitiesPage() {
                     Selected:
                   </span>
 
-                  <span className="rounded-full bg-[#641C32]/10 px-3 py-1.5 text-xs font-semibold text-[#641C32] dark:text-[#D9B8C4]">
+                  <span className="rounded-full bg-[#641C32]/10 px-3 py-1.5 text-xs font-semibold text-[#641C32] dark:text-[#D7A9B8]">
                     {selectedCategory}
                   </span>
 
@@ -580,7 +588,7 @@ export default function OpportunitiesPage() {
                   {selectedFilters > 0 && (
                     <button
                       onClick={resetFilters}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-[#641C32] hover:underline"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-[#641C32] hover:underline dark:text-[#D7A9B8]"
                     >
                       <X size={13} />
                       Clear
@@ -635,10 +643,8 @@ export default function OpportunitiesPage() {
               </div>
             )}
 
-            {/* OPPORTUNITY EMPTY STATE */}
-
             <div className="rounded-2xl border border-dashed border-border bg-card/50 px-5 py-12 text-center sm:px-10">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#641C32]/10 text-[#641C32]">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#641C32]/10 text-[#641C32] dark:text-[#D7A9B8]">
                 {activeTab === "Saved" ? (
                   <Bookmark size={29} />
                 ) : activeTab === "My Applications" ? (
@@ -652,16 +658,16 @@ export default function OpportunitiesPage() {
                 {activeTab === "Saved"
                   ? "Your saved opportunities will appear here"
                   : activeTab === "My Applications"
-                  ? "Your application journey starts here"
-                  : "Discover your next opportunity"}
+                    ? "Your application journey starts here"
+                    : "Discover your next opportunity"}
               </h3>
 
               <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-muted-foreground">
                 {activeTab === "Saved"
                   ? "Bookmark opportunities to create your personal collection."
                   : activeTab === "My Applications"
-                  ? "Applications you track will appear here with their stages, notes and follow-up dates."
-                  : "Opportunities from verified organizations and approved sources will appear here when the live opportunity database is connected."}
+                    ? "Applications you track will appear here with their stages, notes and follow-up dates."
+                    : "Opportunities from verified organizations and approved sources will appear here when the live opportunity database is connected."}
               </p>
 
               {activeTab === "Discover" && (
@@ -683,12 +689,10 @@ export default function OpportunitiesPage() {
             </div>
           </section>
 
-          {/* ORGANIZATION SECTION */}
-
           <section className="rounded-2xl border border-border bg-card p-5 sm:p-7">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-4">
-                <div className="rounded-xl bg-[#641C32]/10 p-3 text-[#641C32]">
+                <div className="rounded-xl bg-[#641C32]/10 p-3 text-[#641C32] dark:text-[#D7A9B8]">
                   <Building2 size={24} />
                 </div>
 
@@ -713,11 +717,9 @@ export default function OpportunitiesPage() {
             </div>
           </section>
 
-          {/* TRUST INFORMATION */}
-
           <section className="rounded-2xl border border-border bg-muted/30 p-5">
             <div className="flex items-start gap-3">
-              <ShieldCheck size={21} className="mt-0.5 shrink-0 text-[#641C32]" />
+              <ShieldCheck size={21} className="mt-0.5 shrink-0 text-[#641C32] dark:text-[#D7A9B8]" />
               <div>
                 <h3 className="text-sm font-bold">
                   Opportunities you can trust
@@ -736,8 +738,8 @@ export default function OpportunitiesPage() {
           <footer className="border-t border-border py-5 text-center text-xs text-muted-foreground">
             ZUNO · Discover. Connect. Build. Grow.
           </footer>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

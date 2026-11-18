@@ -51,6 +51,7 @@ function DetailPageContent() {
   const [community, setCommunity] = useState<DetailData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [menuOpen, setMenuOpen] = useState(true);
 
   const config = typeConfig[type];
   const Icon = config?.icon || Sparkles;
@@ -448,12 +449,25 @@ function DetailPageContent() {
   );
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 md:block">
-        <Sidebar />
+    <div className="min-h-screen w-full overflow-x-hidden bg-background text-foreground">
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 hidden md:block transition-[width] duration-300 ease-in-out ${
+          menuOpen ? "w-64" : "w-[76px]"
+        }`}
+      >
+        <Sidebar
+          menuOpen={menuOpen}
+          onMenuToggle={() => setMenuOpen((previous) => !previous)}
+        />
       </aside>
 
-      <main className="min-h-screen min-w-0 md:ml-64">
+      <div
+        className={`min-h-screen w-full min-w-0 transition-[margin-left,width] duration-300 ease-in-out ${
+          menuOpen
+            ? "md:ml-64 md:w-[calc(100%-16rem)]"
+            : "md:ml-[76px] md:w-[calc(100%-76px)]"
+        }`}
+      >
         <div className="sticky top-0 z-40">
           <Topbar />
         </div>
@@ -521,7 +535,7 @@ function DetailPageContent() {
             ZUNO · Discover. Connect. Build. Grow.
           </footer>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
